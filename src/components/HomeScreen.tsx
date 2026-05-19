@@ -48,7 +48,7 @@ export default function HomeScreen({
   };
 
   return (
-    <div className="min-screen flex flex-col bg-background relative overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-background relative overflow-hidden">
       {/* Background Gradients */}
       <div className="absolute inset-0 bg-gradient-mesh z-0 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full max-w-[800px] pointer-events-none overflow-hidden">
@@ -57,7 +57,7 @@ export default function HomeScreen({
       </div>
 
       {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-10 flex justify-center bg-black/40 backdrop-blur-[20px] border-b border-white/10">
+      <header className="fixed top-0 left-0 w-full z-50 flex justify-center bg-black/40 backdrop-blur-[20px] border-b border-white/10">
         <div className="w-full max-w-7xl flex justify-between items-center px-6 md:px-12 py-4">
           <div className="flex items-center gap-3">
             <Grid className="text-primary neon-text-primary" size={24} />
