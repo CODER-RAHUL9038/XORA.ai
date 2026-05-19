@@ -225,6 +225,13 @@ export default function HomeScreen({
           <span className="text-[8px] font-bold uppercase tracking-widest mt-1">History</span>
         </button>
         <button 
+          onClick={toggleMute}
+          className={`flex flex-col items-center transition-colors ${isMuted ? 'text-red-500/50' : 'text-on-surface-variant/40 hover:text-primary'}`}
+        >
+          {isMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+          <span className="text-[8px] font-bold uppercase tracking-widest mt-1">{isMuted ? 'Muted' : 'Sound'}</span>
+        </button>
+        <button 
           onClick={openSettings}
           className="flex flex-col items-center text-on-surface-variant/40 hover:text-primary transition-colors"
         >
