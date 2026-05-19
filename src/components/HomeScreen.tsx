@@ -118,7 +118,7 @@ export default function HomeScreen({
               className="max-w-2xl mx-auto px-4"
             >
               <p className="text-on-surface-variant text-sm md:text-base leading-relaxed opacity-80 font-normal max-w-lg mx-auto">
-                I built <span className="text-primary font-bold">XORA</span> with passion for strategy, clean design, and next-level gameplay.
+                I built <span className="text-primary font-bold">XORA.ai</span> with passion for strategy, clean design, and next-level gameplay againt ai.
               </p>
             </motion.div>
           </section>

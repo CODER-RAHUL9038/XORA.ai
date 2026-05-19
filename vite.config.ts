@@ -14,7 +14,7 @@ export default defineConfig(({mode}) => {
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg'],
         manifest: {
-          name: 'Xora.ai: Tech Tic-Tac-Toe',
+          name: 'Xora.ai',
           short_name: 'Xora.ai',
           description: 'The future of Tic-Tac-Toe with neon aesthetics and AI.',
           theme_color: '#0e0e0f',
