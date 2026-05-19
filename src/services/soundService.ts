@@ -1,4 +1,6 @@
 
+import dogSound from '../assets/dog.mp3';
+
 class SoundService {
   private audioCtx: AudioContext | null = null;
   private masterGain: GainNode | null = null;
@@ -53,6 +55,33 @@ class SoundService {
     osc.stop(this.audioCtx.currentTime + duration);
   }
 
+  private async playBuffer(url: string, duration?: number, volume: number = 1) {
+    if (this.isMuted) return;
+    this.init();
+    
+    try {
+      const response = await fetch(url);
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await this.audioCtx!.decodeAudioData(arrayBuffer);
+      
+      const source = this.audioCtx!.createBufferSource();
+      const boostGain = this.audioCtx!.createGain();
+      
+      source.buffer = audioBuffer;
+      boostGain.gain.setValueAtTime(volume, this.audioCtx!.currentTime);
+      
+      source.connect(boostGain);
+      boostGain.connect(this.masterGain!);
+      source.start();
+
+      if (duration) {
+        source.stop(this.audioCtx!.currentTime + duration);
+      }
+    } catch (e) {
+      console.error("Failed to play sound buffer", e);
+    }
+  }
+
   playMoveX() {
     this.playTone(440, 'sine', 0.2); // A4
   }
@@ -66,9 +95,7 @@ class SoundService {
   }
 
   playWin() {
-    [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
-       setTimeout(() => this.playTone(freq, 'triangle', 0.4), i * 100);
-    });
+    this.playBuffer(dogSound, 2, 2.5); // Limit to 2 seconds and boost volume by 2.5x
   }
 
   playDraw() {
@@ -80,63 +107,90 @@ class SoundService {
     this.init();
     const now = this.audioCtx!.currentTime;
     
-    // 1. The "Whoosh" (Air displacement)
-    const noiseBuffer = this.audioCtx!.createBuffer(1, this.audioCtx!.sampleRate * 0.4, this.audioCtx!.sampleRate);
+    // 1. THE PRECISION "SNAP" (Ultra-fast transient)
+    const snapOsc = this.audioCtx!.createOscillator();
+    const snapGain = this.audioCtx!.createGain();
+    snapOsc.type = 'square';
+    snapOsc.frequency.setValueAtTime(15000, now);
+    snapOsc.frequency.exponentialRampToValueAtTime(5000, now + 0.01);
+    snapGain.gain.setValueAtTime(0.3, now);
+    snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+    snapOsc.connect(snapGain);
+    snapGain.connect(this.masterGain!);
+
+    // 2. THE CYBER SLASH (Resonant Filter Sweep)
+    const slash1 = this.audioCtx!.createOscillator();
+    const slash2 = this.audioCtx!.createOscillator();
+    const slashGain = this.audioCtx!.createGain();
+    const slashFilter = this.audioCtx!.createBiquadFilter();
+
+    slash1.type = 'sawtooth';
+    slash2.type = 'sawtooth';
+    slash1.frequency.setValueAtTime(1200, now);
+    slash2.frequency.setValueAtTime(1215, now); // Detuned for thickness
+    slash1.frequency.exponentialRampToValueAtTime(80, now + 0.15);
+    slash2.frequency.exponentialRampToValueAtTime(82, now + 0.15);
+
+    slashFilter.type = 'lowpass';
+    slashFilter.frequency.setValueAtTime(8000, now);
+    slashFilter.frequency.exponentialRampToValueAtTime(400, now + 0.12);
+    slashFilter.Q.setValueAtTime(15, now); // High resonance for "laser" character
+
+    slashGain.gain.setValueAtTime(0.3, now);
+    slashGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+
+    slash1.connect(slashFilter);
+    slash2.connect(slashFilter);
+    slashFilter.connect(slashGain);
+    slashGain.connect(this.masterGain!);
+
+    // 3. METALLIC EDGE (Inharmonic pings)
+    const edge = (freq: number, dur: number) => {
+      const o = this.audioCtx!.createOscillator();
+      const g = this.audioCtx!.createGain();
+      o.type = 'triangle';
+      o.frequency.setValueAtTime(freq, now);
+      g.gain.setValueAtTime(0.08, now);
+      g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+      o.connect(g);
+      g.connect(this.masterGain!);
+      o.start(now);
+      o.stop(now + dur + 0.1);
+    };
+    edge(2200, 0.08);
+    edge(3150, 0.1);
+    edge(4400, 0.06);
+
+    // 4. ENERGY TAIL / BLOOM
+    const noiseBuffer = this.audioCtx!.createBuffer(1, this.audioCtx!.sampleRate * 0.5, this.audioCtx!.sampleRate);
     const output = noiseBuffer.getChannelData(0);
-    for (let i = 0; i < noiseBuffer.length; i++) {
-      output[i] = Math.random() * 2 - 1;
-    }
+    for (let i = 0; i < noiseBuffer.length; i++) output[i] = Math.random() * 2 - 1;
     const noise = this.audioCtx!.createBufferSource();
     noise.buffer = noiseBuffer;
-    
-    const noiseFilter = this.audioCtx!.createBiquadFilter();
-    noiseFilter.type = 'bandpass';
-    noiseFilter.frequency.setValueAtTime(800, now);
-    noiseFilter.frequency.exponentialRampToValueAtTime(7000, now + 0.15);
-    noiseFilter.Q.value = 8;
 
-    const noiseGain = this.audioCtx!.createGain();
-    noiseGain.gain.setValueAtTime(0, now);
-    noiseGain.gain.linearRampToValueAtTime(0.7, now + 0.02);
-    noiseGain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+    const nFilter = this.audioCtx!.createBiquadFilter();
+    nFilter.type = 'highpass';
+    nFilter.frequency.setValueAtTime(4000, now);
+    nFilter.frequency.exponentialRampToValueAtTime(12000, now + 0.4);
 
-    noise.connect(noiseFilter);
-    noiseFilter.connect(noiseGain);
-    noiseGain.connect(this.masterGain!);
+    const nGain = this.audioCtx!.createGain();
+    nGain.gain.setValueAtTime(0, now);
+    nGain.gain.linearRampToValueAtTime(0.12, now + 0.02);
+    nGain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
 
-    // 2. The "Metallic Slash" (Cyberpunk texture)
-    const osc1 = this.audioCtx!.createOscillator();
-    const osc1Gain = this.audioCtx!.createGain();
-    osc1.type = 'sawtooth';
-    osc1.frequency.setValueAtTime(2500, now);
-    osc1.frequency.exponentialRampToValueAtTime(200, now + 0.2);
-    
-    osc1Gain.gain.setValueAtTime(0.3, now);
-    osc1Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-    
-    osc1.connect(osc1Gain);
-    osc1Gain.connect(this.masterGain!);
+    noise.connect(nFilter);
+    nFilter.connect(nGain);
+    nGain.connect(this.masterGain!);
 
-    // 3. High-frequency "Energy" (The sharp edge)
-    const osc2 = this.audioCtx!.createOscillator();
-    const osc2Gain = this.audioCtx!.createGain();
-    osc2.type = 'square';
-    osc2.frequency.setValueAtTime(5000, now);
-    osc2.frequency.exponentialRampToValueAtTime(14000, now + 0.05);
-    
-    osc2Gain.gain.setValueAtTime(0.2, now);
-    osc2Gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-    
-    osc2.connect(osc2Gain);
-    osc2Gain.connect(this.masterGain!);
-
-    // Start all components simultaneously
+    snapOsc.start(now);
+    slash1.start(now);
+    slash2.start(now);
     noise.start(now);
-    osc1.start(now);
-    osc2.start(now);
-    
-    osc1.stop(now + 0.4);
-    osc2.stop(now + 0.4);
+
+    snapOsc.stop(now + 0.02);
+    slash1.stop(now + 0.2);
+    slash2.stop(now + 0.2);
+    noise.stop(now + 0.6);
   }
 
   playEpicStrike() {
@@ -144,23 +198,35 @@ class SoundService {
     this.init();
     const now = this.audioCtx!.currentTime;
 
-    // A more intense explosive strike
+    // More powerful version of the strike
     this.playStrike();
     
-    // Add a lingering crystalline reverb / shimmer
-    const osc = this.audioCtx!.createOscillator();
-    const g = this.audioCtx!.createGain();
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(880, now);
-    osc.frequency.exponentialRampToValueAtTime(1760, now + 1.0);
-    
-    g.gain.setValueAtTime(0.2, now);
-    g.gain.exponentialRampToValueAtTime(0.001, now + 1.5);
-    
-    osc.connect(g);
-    g.connect(this.masterGain!);
-    osc.start(now);
-    osc.stop(now + 1.5);
+    // Add a huge sub-drop
+    const dropOsc = this.audioCtx!.createOscillator();
+    const dropGain = this.audioCtx!.createGain();
+    dropOsc.type = 'sine';
+    dropOsc.frequency.setValueAtTime(100, now);
+    dropOsc.frequency.exponentialRampToValueAtTime(20, now + 0.8);
+    dropGain.gain.setValueAtTime(1.0, now);
+    dropGain.gain.exponentialRampToValueAtTime(0.001, now + 1.0);
+    dropOsc.connect(dropGain);
+    dropGain.connect(this.masterGain!);
+
+    // Add a high-frequency "shimmer"
+    const shimmerOsc = this.audioCtx!.createOscillator();
+    const shimmerGain = this.audioCtx!.createGain();
+    shimmerOsc.type = 'triangle';
+    shimmerOsc.frequency.setValueAtTime(3000, now);
+    shimmerOsc.frequency.exponentialRampToValueAtTime(8000, now + 0.5);
+    shimmerGain.gain.setValueAtTime(0.1, now);
+    shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
+    shimmerOsc.connect(shimmerGain);
+    shimmerGain.connect(this.masterGain!);
+
+    dropOsc.start(now);
+    shimmerOsc.start(now);
+    dropOsc.stop(now + 1.0);
+    shimmerOsc.stop(now + 0.6);
   }
 
   playStartup() {

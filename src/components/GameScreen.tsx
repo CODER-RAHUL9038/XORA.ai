@@ -110,20 +110,20 @@ export default function GameScreen({
       }
 
       if (result.line) {
-        sounds.playEpicStrike();
+        sounds.playWin(); // Play only dog sound for every match win
+
         setTimeout(() => {
           if (hasSeriesWinner) {
-            sounds.playWin();
             setShowWinnerModal(true);
           } else {
-            // Auto reset for next match in series
+            // Auto reset for next match in series after the 2s delay
             setBoard(Array(9).fill(null));
             setWinner(null);
             setWinningLine(null);
             setIsXNext(true);
             setMatchCount(prev => prev + 1);
           }
-        }, 1500);
+        }, 2000); // 2 second delay as requested
       } else if (result.winner === 'Draw') {
         setTimeout(() => {
           // Draws don't end the series usually, just move to next match
