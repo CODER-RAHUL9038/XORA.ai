@@ -1,5 +1,6 @@
 
 import dogSound from '../assets/dog.mp3';
+import faaaSound from '../assets/faaa.mp3';
 
 class SoundService {
   private audioCtx: AudioContext | null = null;
@@ -96,6 +97,10 @@ class SoundService {
 
   playWin() {
     this.playBuffer(dogSound, 2, 2.5); // Limit to 2 seconds and boost volume by 2.5x
+  }
+
+  playSeriesWin() {
+    this.playBuffer(faaaSound, 0, 1.5); // Play full faaa sound with boost
   }
 
   playDraw() {

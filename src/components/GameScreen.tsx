@@ -114,6 +114,7 @@ export default function GameScreen({
 
         setTimeout(() => {
           if (hasSeriesWinner) {
+            sounds.playSeriesWin(); // Play faaa music for series winner
             setShowWinnerModal(true);
           } else {
             // Auto reset for next match in series after the 2s delay
