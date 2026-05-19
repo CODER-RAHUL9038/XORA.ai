@@ -188,7 +188,7 @@ export default function GameScreen({
       <header className="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 py-4 bg-black/40 backdrop-blur-md border-b border-white/10">
         <div className="flex items-center gap-2">
           <Grid className="text-primary" size={20} />
-          <h1 className="text-lg font-bold tracking-tighter text-primary uppercase">XORA</h1>
+          <h1 className="text-lg font-bold tracking-tighter text-primary">Xora.ai</h1>
         </div>
         <button 
           onClick={toggleMute}

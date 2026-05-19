@@ -71,8 +71,8 @@ export default function SplashScreen() {
 
         {/* Text Branding */}
         <div className="flex flex-col items-center gap-2">
-          <h1 className="text-5xl md:text-7xl font-extrabold uppercase tracking-tighter text-primary neon-text-primary">
-            Xora
+          <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter text-primary neon-text-primary">
+            Xora.ai
           </h1>
           <p className="text-xs uppercase tracking-[0.4em] text-on-surface-variant opacity-80 mt-2">
             THE FUTURE OF TIC TAC TOE

@@ -61,8 +61,8 @@ export default function HomeScreen({
         <div className="w-full max-w-7xl flex justify-between items-center px-6 md:px-12 py-4">
           <div className="flex items-center gap-3">
             <Grid className="text-primary neon-text-primary" size={24} />
-            <span className="text-xl font-bold tracking-tighter text-primary neon-text-primary uppercase">
-              Xora
+            <span className="text-xl font-bold tracking-tighter text-primary neon-text-primary">
+              Xora.ai
             </span>
           </div>
           <div className="flex items-center gap-4">
