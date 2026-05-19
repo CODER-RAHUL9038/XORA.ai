@@ -1,0 +1,8 @@
+{
+  "name": "Remix: Xora",
+  "description": "A high-fidelity, neon-infused Tic Tac Toe experience with advanced AI and global rankings.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
