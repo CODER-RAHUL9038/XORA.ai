@@ -110,11 +110,19 @@ export default function GameScreen({
       }
 
       if (result.line) {
-        sounds.playWin(); // Play only dog sound for every match win
+        if (result.winner === 'X') {
+          sounds.playWin(); // Play dog sound for player win
+        } else {
+          sounds.playLoss(); // Play faaa sound for opponent win
+        }
 
         setTimeout(() => {
           if (hasSeriesWinner) {
-            sounds.playSeriesWin(); // Play faaa music for series winner
+            if (scores.p1 >= 6 || newScores.p1 >= 6) {
+              sounds.playSeriesWin(); // Player 1 wins the series (Full Dog)
+            } else {
+              sounds.playSeriesLoss(); // Player 2 wins the series (Full Faaa)
+            }
             setShowWinnerModal(true);
           } else {
             // Auto reset for next match in series after the 2s delay

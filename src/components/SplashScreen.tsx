@@ -7,21 +7,14 @@ export default function SplashScreen() {
   const [progress, setProgress] = useState(5);
   
   useEffect(() => {
-    let played = false;
-    const handleInteraction = () => {
-      if (!played) {
-        sounds.playStartup();
-        played = true;
-      }
-    };
+    // Detect if running in PWA (Standalone) mode
+    const isPWA = window.matchMedia('(display-mode: standalone)').matches || 
+                  (window.navigator as any).standalone === true;
 
-    window.addEventListener('click', handleInteraction);
-    window.addEventListener('touchstart', handleInteraction);
-
-    // Initial attempt (might be blocked by browser)
-    sounds.playStartup();
-    // If it played successfully (which is hard to detect perfectly but sounds.playStartup handles its own check)
-    // we still keep listeners for a bit in case it was blocked.
+    // Only play startup sound automatically if in PWA
+    if (isPWA) {
+      sounds.playStartup();
+    }
 
     const timer = setInterval(() => {
       setProgress(prev => {
@@ -38,8 +31,6 @@ export default function SplashScreen() {
     
     return () => {
       clearInterval(timer);
-      window.removeEventListener('click', handleInteraction);
-      window.removeEventListener('touchstart', handleInteraction);
     };
   }, []);
 

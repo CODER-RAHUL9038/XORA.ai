@@ -99,7 +99,15 @@ class SoundService {
     this.playBuffer(dogSound, 2, 2.5); // Limit to 2 seconds and boost volume by 2.5x
   }
 
+  playLoss() {
+    this.playBuffer(faaaSound, 2, 1.5); // Play faaa sound for match loss, limit to 2s
+  }
+
   playSeriesWin() {
+    this.playBuffer(dogSound, 0, 2.5); // Play full dog sound with boost
+  }
+
+  playSeriesLoss() {
     this.playBuffer(faaaSound, 0, 1.5); // Play full faaa sound with boost
   }
 
