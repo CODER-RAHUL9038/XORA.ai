@@ -13,19 +13,43 @@ export default defineConfig(({mode}) => {
       VitePWA({
         registerType: 'autoUpdate',
         includeAssets: ['icon.svg'],
+        devOptions: {
+          enabled: true
+        },
         manifest: {
+          id: '/?source=pwa',
           name: 'Xora.ai',
           short_name: 'Xora.ai',
           description: 'The future of Tic-Tac-Toe with neon aesthetics and AI.',
           theme_color: '#0e0e0f',
           background_color: '#0e0e0f',
           display: 'standalone',
+          start_url: '/?source=pwa',
+          scope: '/',
           icons: [
             {
               src: 'icon.svg',
               sizes: 'any',
               type: 'image/svg+xml',
-              purpose: 'any maskable'
+              purpose: 'any'
+            },
+            {
+              src: 'icon.svg',
+              sizes: 'any',
+              type: 'image/svg+xml',
+              purpose: 'maskable'
+            },
+            {
+              src: 'icon.svg',
+              sizes: '192x192',
+              type: 'image/svg+xml',
+              purpose: 'any'
+            },
+            {
+              src: 'icon.svg',
+              sizes: '512x512',
+              type: 'image/svg+xml',
+              purpose: 'any'
             }
           ]
         }
