@@ -207,34 +207,12 @@ export default function GameScreen({
         </button>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center pt-24 pb-20 px-4 relative z-10 w-full overflow-y-auto">
-        <div className="flex flex-col items-center justify-center gap-8 md:gap-12 w-full max-w-4xl mx-auto">
+      <main className="flex-1 flex flex-col items-center pt-24 pb-20 px-4 relative z-10 w-full overflow-y-auto">
+        <div className="flex flex-col lg:flex-row items-center lg:items-center justify-center gap-8 lg:gap-16 w-full max-w-4xl lg:max-w-6xl mx-auto py-8">
           
-          {/* Top Section: Turn Indicator */}
-          <div className="flex flex-col items-center w-full">
-            <div className="mb-8 md:mb-12 flex flex-col items-center">
-              <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className={`px-8 py-3 md:px-12 md:py-4 rounded-full border transition-all duration-300 shadow-lg ${getStatusColorClasses()}`}
-              >
-                <p className="text-[11px] md:text-sm font-black uppercase tracking-[0.2em]">
-                  Match {matchCount} • {winner ? (winner === 'Draw' ? 'GAME DRAWN' : `${winner === 'X' ? settings.player1Name : settings.player2Name} WINS!`) : (isXNext ? `${settings.player1Name}'S TURN` : `${settings.player2Name}'S TURN`)}
-                </p>
-              </motion.div>
-              <motion.div 
-                animate={{ 
-                  x: winner ? 0 : (isXNext ? -30 : 30),
-                  opacity: winner ? 0 : 1,
-                  boxShadow: isXNext ? "0 0 20px #00f0ff" : "0 0 20px #ff24e4",
-                  backgroundColor: isXNext ? "#00f0ff" : "#ff24e4"
-                }}
-                className="h-1 w-12 md:w-16 rounded-full mt-4 transition-all duration-500" 
-              />
-            </div>
-
-            {/* Board */}
-            <div className="relative w-full max-w-[380px] sm:max-w-[460px] md:max-w-[600px] lg:max-w-[660px] aspect-[1.1/1] overflow-hidden rounded-2xl bg-black/40 p-3 md:p-4 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+          {/* Left Column: Board */}
+          <div className="w-full flex-1 flex flex-col items-center max-w-[500px] lg:max-w-[440px]">
+            <div className="relative w-full aspect-[1/1] overflow-hidden rounded-2xl bg-black/40 p-3 md:p-4 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                {/* Grid Lines */}
                <div className="absolute inset-0 z-0 pointer-events-none">
                   <div className="absolute left-1/3 top-0 bottom-0 w-[2px] bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
@@ -276,7 +254,7 @@ export default function GameScreen({
                               } : { duration: 0.3 }}
                               className="text-primary neon-text-primary"
                             >
-                              <XIcon className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 stroke-[1.5px]" />
+                              <XIcon className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-28 lg:h-28 stroke-[1.5px]" />
                             </motion.div>
                           )}
                           {cell === 'O' && (
@@ -293,7 +271,7 @@ export default function GameScreen({
                               } : { duration: 0.3 }}
                               className="text-white"
                             >
-                              <Circle className="w-14 h-14 sm:w-18 sm:h-18 md:w-24 md:h-24 lg:w-28 lg:h-28 stroke-[1.5px] text-[#ff24e4]" />
+                              <Circle className="w-14 h-14 sm:w-18 sm:h-18 md:w-24 md:h-24 lg:w-24 lg:h-24 stroke-[1.5px] text-[#ff24e4]" />
                             </motion.div>
                           )}
                         </AnimatePresence>
@@ -304,8 +282,30 @@ export default function GameScreen({
             </div>
           </div>
 
-          {/* Bottom Section: Scoreboard and Actions */}
-          <div className="flex flex-col w-full max-w-[380px] sm:max-w-[460px] md:max-w-[600px] lg:max-w-[660px]">
+          {/* Right Column: Info & Actions */}
+          <div className="flex flex-col w-full max-w-[380px] sm:max-w-[460px] md:max-w-[600px] lg:max-w-[400px] gap-6 lg:gap-8">
+            {/* Turn Indicator */}
+            <div className="flex flex-col items-center lg:items-start w-full">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`w-full px-8 py-3 md:px-12 md:py-4 lg:py-4 rounded-2xl border transition-all duration-300 shadow-lg text-center ${getStatusColorClasses()}`}
+              >
+                <p className="text-[11px] md:text-sm font-black uppercase tracking-[0.2em]">
+                  Match {matchCount} • {winner ? (winner === 'Draw' ? 'GAME DRAWN' : `${winner === 'X' ? settings.player1Name : settings.player2Name} WINS!`) : (isXNext ? `${settings.player1Name}'S TURN` : `${settings.player2Name}'S TURN`)}
+                </p>
+              </motion.div>
+              <motion.div 
+                animate={{ 
+                  x: winner ? 0 : (isXNext ? -20 : 20),
+                  opacity: winner ? 0 : 1,
+                  boxShadow: isXNext ? "0 0 20px #00f0ff" : "0 0 20px #ff24e4",
+                  backgroundColor: isXNext ? "#00f0ff" : "#ff24e4"
+                }}
+                className="h-1 w-12 md:w-16 rounded-full mt-4 transition-all duration-500 self-center lg:self-start lg:ml-8" 
+              />
+            </div>
+
             {/* Scoreboard */}
             <section className="w-full">
               <div className="bg-white/[0.03] border border-white/10 p-6 md:p-8 rounded-2xl flex justify-between items-center backdrop-blur-xl shadow-2xl relative overflow-hidden group">
@@ -341,7 +341,7 @@ export default function GameScreen({
                       <Edit2 size={10} className="text-on-surface-variant/20 group-hover/name:text-primary transition-colors" />
                     </div>
                   )}
-                  <p className="text-4xl md:text-5xl lg:text-6xl font-black text-primary neon-text-primary tabular-nums">{scores.p1}</p>
+                  <p className="text-4xl md:text-5xl font-black text-primary neon-text-primary tabular-nums">{scores.p1}</p>
                 </div>
 
                 <div className="flex flex-col items-center gap-2 relative z-10 px-4">
@@ -383,23 +383,23 @@ export default function GameScreen({
                   ) : (
                     <p className="text-[10px] md:text-xs font-black text-on-surface-variant/60 uppercase tracking-[0.2em]">{settings.player2Name} (O)</p>
                   )}
-                  <p className="text-4xl md:text-5xl lg:text-6xl font-black text-secondary-container drop-shadow-[0_0_15px_#ff24e4] tabular-nums">{scores.p2}</p>
+                  <p className="text-4xl md:text-5xl font-black text-secondary-container drop-shadow-[0_0_15px_#ff24e4] tabular-nums">{scores.p2}</p>
                 </div>
               </div>
             </section>
 
             {/* Actions */}
-            <div className="mt-6 flex flex-row gap-4 w-full">
+            <div className="flex flex-row lg:flex-col gap-4 w-full">
               <button 
                 onClick={resetSeries}
-                className="flex-1 bg-primary/10 border border-primary/20 py-4 md:py-6 rounded-xl flex items-center justify-center gap-3 hover:bg-primary/20 hover:border-primary/40 transition-all active:scale-[0.98] group"
+                className="flex-1 bg-primary/10 border border-primary/20 py-4 md:py-6 lg:py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-primary/20 hover:border-primary/40 transition-all active:scale-[0.98] group"
               >
                 <RefreshCcw size={18} className="text-primary group-hover:rotate-180 transition-transform duration-500" />
                 <span className="text-[11px] md:text-xs font-black text-primary uppercase tracking-[0.2em]">Reset Series</span>
               </button>
               <button 
                 onClick={handleBackToMenu}
-                className="flex-1 bg-white/[0.03] border border-white/10 py-4 md:py-6 rounded-xl flex items-center justify-center gap-3 hover:bg-white/[0.08] hover:border-white/20 transition-all active:scale-[0.98]"
+                className="flex-1 bg-white/[0.03] border border-white/10 py-4 md:py-6 lg:py-5 rounded-xl flex items-center justify-center gap-3 hover:bg-white/[0.08] hover:border-white/20 transition-all active:scale-[0.98]"
               >
                 <Home size={18} className="text-on-surface-variant" />
                 <span className="text-[11px] md:text-xs font-black text-on-surface-variant uppercase tracking-[0.2em]">Back to Menu</span>

@@ -94,14 +94,14 @@ export default function HomeScreen({
       <main className="flex-1 flex flex-col items-center w-full pt-16 pb-20 md:py-24 relative z-10 px-6">
         <div className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl mx-auto">
           {/* Hero Section */}
-          <section className="text-center mb-6 md:mb-8 w-full pt-4">
+          <section className="text-center mb-6 md:mb-8 w-full  pt-4">
             <motion.h1 
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
-              className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter mb-8 leading-[1.1] md:leading-[1.1]"
+              className="text-3xl md:text-5xl lg:text-5xl font-black text-white tracking-tighter mb-8 leading-[1.1] md:leading-[0.3]"
             >
-              <span className="block neon-text-primary uppercase">HI, I'M RAHUL SHAW.</span>
+              <span className="block neon-text-primary uppercase">HI, I'M RAHUL SHAW</span>
             </motion.h1>
 
             {/* Divider */}
@@ -124,7 +124,7 @@ export default function HomeScreen({
           </section>
 
           {/* Action Cards */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-2xl lg:max-w-4xl">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-2xl lg:max-w-3xl">
             {/* Battle AI Card */}
             <motion.div 
                initial={{ opacity: 0, x: -20 }}
