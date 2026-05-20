@@ -207,203 +207,206 @@ export default function GameScreen({
         </button>
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center pt-20 pb-20 px-4 relative z-10 w-full">
-        {/* Turn Indicator */}
-        <div className="mb-10 flex flex-col items-center">
-          <motion.div 
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`px-6 py-2 rounded-full border transition-all duration-300 ${getStatusColorClasses()}`}
-          >
-            <p className="text-[10px] font-bold uppercase tracking-widest">
-              Match {matchCount} • {winner ? (winner === 'Draw' ? 'GAME DRAWN' : `${winner === 'X' ? settings.player1Name : settings.player2Name} WINS!`) : (isXNext ? `${settings.player1Name}'S TURN` : `${settings.player2Name}'S TURN`)}
-            </p>
-          </motion.div>
-          <motion.div 
-            animate={{ 
-              x: winner ? 0 : (isXNext ? -20 : 20),
-              opacity: winner ? 0 : 1,
-              boxShadow: isXNext ? "0 0 15px #00f0ff" : "0 0 15px #ff24e4",
-              backgroundColor: isXNext ? "#00f0ff" : "#ff24e4"
-            }}
-            className="h-1 w-8 rounded-full mt-4 transition-all duration-500" 
-          />
-        </div>
-
-        {/* Board */}
-        <div className="relative w-full max-w-[360px] aspect-square overflow-hidden rounded-lg bg-black/20 p-2 border border-white/5 shadow-2xl">
-           {/* Grid Lines */}
-           <div className="absolute inset-0 z-0 pointer-events-none">
-              <div className="absolute left-1/3 top-0 bottom-0 w-[2px] bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-              <div className="absolute left-2/3 top-0 bottom-0 w-[2px] bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-              <div className="absolute top-1/3 left-0 right-0 h-[2px] bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-              <div className="absolute top-2/3 left-0 right-0 h-[2px] bg-white/10 shadow-[0_0_10px_rgba(255,255,255,0.1)]" />
-           </div>
-
-           {/* Winning Strike Strike */}
-           <div className="absolute inset-0 z-20 pointer-events-none">
-             {winningLine && (
-                <WinningStrike line={winningLine} winner={winner as Player} />
-             )}
-           </div>
-
-           {/* Cells */}
-           <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
-              {board.map((cell, i) => {
-                const isWinningCell = winningLine?.includes(i);
-                return (
-                  <div 
-                    key={i} 
-                    onClick={() => makeMove(i)}
-                    className="flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors relative group"
-                  >
-                    <AnimatePresence>
-                      {cell === 'X' && (
-                        <motion.div
-                          initial={{ scale: 0.5, opacity: 0, rotate: -40 }}
-                          animate={{ 
-                            scale: isWinningCell ? [1, 1.15, 1] : 1, 
-                            opacity: 1, 
-                            rotate: 0,
-                            filter: isWinningCell ? "drop-shadow(0 0 15px #00f0ff)" : "none"
-                          }}
-                          transition={isWinningCell ? { 
-                            scale: { repeat: Infinity, duration: 1.5, ease: "easeInOut" },
-                            default: { duration: 0.3 }
-                          } : { duration: 0.3 }}
-                          className="text-primary neon-text-primary"
-                        >
-                          <XIcon size={64} className="stroke-[1.5px]" />
-                        </motion.div>
-                      )}
-                      {cell === 'O' && (
-                        <motion.div
-                          initial={{ scale: 0.5, opacity: 0 }}
-                          animate={{ 
-                            scale: isWinningCell ? [1, 1.15, 1] : 1, 
-                            opacity: 1,
-                            filter: isWinningCell ? "drop-shadow(0 0 20px #ff24e4)" : "drop-shadow(0 0 10px #ff24e466)"
-                          }}
-                          transition={isWinningCell ? { 
-                            scale: { repeat: Infinity, duration: 1.5, ease: "easeInOut" },
-                            default: { duration: 0.3 }
-                          } : { duration: 0.3 }}
-                          className="text-white"
-                        >
-                          <Circle size={56} className="stroke-[1.5px] text-[#ff24e4]" />
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </div>
-                );
-              })}
-           </div>
-        </div>
-
-        {/* Scoreboard */}
-        <section className="mt-12 w-full max-w-[360px]">
-          <div className="bg-white/5 border border-white/10 p-6 rounded-xl flex justify-between items-center backdrop-blur-sm shadow-xl">
-            <div className="flex flex-col items-center gap-1 flex-1">
-              {editingP1 ? (
-                <div className="flex items-center gap-1">
-                  <input
-                    type="text"
-                    value={tempP1Name}
-                    onChange={(e) => setTempP1Name(e.target.value)}
-                    onBlur={() => {
-                      onUpdateSettings({ player1Name: tempP1Name });
-                      setEditingP1(false);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        onUpdateSettings({ player1Name: tempP1Name });
-                        setEditingP1(false);
-                      }
-                    }}
-                    autoFocus
-                    className="bg-white/10 border-b border-primary text-[10px] font-bold text-primary uppercase tracking-widest w-20 text-center focus:outline-none"
-                  />
-                  <Check size={10} className="text-primary cursor-pointer" onClick={() => {
-                    onUpdateSettings({ player1Name: tempP1Name });
-                    setEditingP1(false);
-                  }} />
-                </div>
-              ) : (
-                <div 
-                  className="flex items-center gap-1 cursor-pointer group"
-                  onClick={() => setEditingP1(true)}
-                >
-                  <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest group-hover:text-primary transition-colors">{settings.player1Name} (X)</p>
-                  <Edit2 size={8} className="text-on-surface-variant/40 group-hover:text-primary transition-colors" />
-                </div>
-              )}
-              <p className="text-2xl font-bold text-primary neon-text-primary">{scores.p1}</p>
+      <main className="flex-1 flex flex-col items-center justify-center pt-24 pb-20 px-4 relative z-10 w-full overflow-y-auto">
+        <div className="flex flex-col items-center justify-center gap-8 md:gap-12 w-full max-w-4xl mx-auto">
+          
+          {/* Top Section: Turn Indicator */}
+          <div className="flex flex-col items-center w-full">
+            <div className="mb-8 md:mb-12 flex flex-col items-center">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`px-8 py-3 md:px-12 md:py-4 rounded-full border transition-all duration-300 shadow-lg ${getStatusColorClasses()}`}
+              >
+                <p className="text-[11px] md:text-sm font-black uppercase tracking-[0.2em]">
+                  Match {matchCount} • {winner ? (winner === 'Draw' ? 'GAME DRAWN' : `${winner === 'X' ? settings.player1Name : settings.player2Name} WINS!`) : (isXNext ? `${settings.player1Name}'S TURN` : `${settings.player2Name}'S TURN`)}
+                </p>
+              </motion.div>
+              <motion.div 
+                animate={{ 
+                  x: winner ? 0 : (isXNext ? -30 : 30),
+                  opacity: winner ? 0 : 1,
+                  boxShadow: isXNext ? "0 0 20px #00f0ff" : "0 0 20px #ff24e4",
+                  backgroundColor: isXNext ? "#00f0ff" : "#ff24e4"
+                }}
+                className="h-1 w-12 md:w-16 rounded-full mt-4 transition-all duration-500" 
+              />
             </div>
-            <div className="h-8 w-px bg-white/10 mx-2" />
-            <div className="flex flex-col items-center gap-1">
-              <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">Draws</p>
-              <p className="text-2xl font-bold text-white">{scores.draws}</p>
-            </div>
-            <div className="h-8 w-px bg-white/10 mx-2" />
-            <div className="flex flex-col items-center gap-1 flex-1">
-              {settings.mode === 'pvp' ? (
-                editingP2 ? (
-                  <div className="flex items-center gap-1">
-                    <input
-                      type="text"
-                      value={tempP2Name}
-                      onChange={(e) => setTempP2Name(e.target.value)}
-                      onBlur={() => {
-                        onUpdateSettings({ player2Name: tempP2Name });
-                        setEditingP2(false);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter') {
-                          onUpdateSettings({ player2Name: tempP2Name });
-                          setEditingP2(false);
-                        }
-                      }}
-                      autoFocus
-                      className="bg-white/10 border-b border-[#ff24e4] text-[10px] font-bold text-[#ff24e4] uppercase tracking-widest w-20 text-center focus:outline-none"
-                    />
-                    <Check size={10} className="text-[#ff24e4] cursor-pointer" onClick={() => {
-                      onUpdateSettings({ player2Name: tempP2Name });
-                      setEditingP2(false);
-                    }} />
-                  </div>
-                ) : (
-                  <div 
-                    className="flex items-center gap-1 cursor-pointer group"
-                    onClick={() => setEditingP2(true)}
-                  >
-                    <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest group-hover:text-[#ff24e4] transition-colors">{settings.player2Name} (O)</p>
-                    <Edit2 size={8} className="text-on-surface-variant/40 group-hover:text-[#ff24e4] transition-colors" />
-                  </div>
-                )
-              ) : (
-                <p className="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest">{settings.player2Name} (O)</p>
-              )}
-              <p className="text-2xl font-bold text-secondary-container drop-shadow-[0_0_10px_#ff24e4]">{scores.p2}</p>
+
+            {/* Board */}
+            <div className="relative w-full max-w-[380px] sm:max-w-[460px] md:max-w-[600px] lg:max-w-[660px] aspect-[1.1/1] overflow-hidden rounded-2xl bg-black/40 p-3 md:p-4 border border-white/10 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
+               {/* Grid Lines */}
+               <div className="absolute inset-0 z-0 pointer-events-none">
+                  <div className="absolute left-1/3 top-0 bottom-0 w-[2px] bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+                  <div className="absolute left-2/3 top-0 bottom-0 w-[2px] bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+                  <div className="absolute top-1/3 left-0 right-0 h-[2px] bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+                  <div className="absolute top-2/3 left-0 right-0 h-[2px] bg-white/5 shadow-[0_0_15px_rgba(255,255,255,0.05)]" />
+               </div>
+
+               {/* Winning Strike Strike */}
+               <div className="absolute inset-0 z-20 pointer-events-none">
+                 {winningLine && (
+                    <WinningStrike line={winningLine} winner={winner as Player} />
+                 )}
+               </div>
+
+               {/* Cells */}
+               <div className="absolute inset-0 grid grid-cols-3 grid-rows-3 z-10">
+                  {board.map((cell, i) => {
+                    const isWinningCell = winningLine?.includes(i);
+                    return (
+                      <div 
+                        key={i} 
+                        onClick={() => makeMove(i)}
+                        className="flex items-center justify-center cursor-pointer hover:bg-white/[0.02] transition-colors relative group"
+                      >
+                        <AnimatePresence>
+                          {cell === 'X' && (
+                            <motion.div
+                              initial={{ scale: 0.5, opacity: 0, rotate: -45 }}
+                              animate={{ 
+                                scale: isWinningCell ? [1, 1.2, 1] : 1, 
+                                opacity: 1, 
+                                rotate: 0,
+                                filter: isWinningCell ? "drop-shadow(0 0 20px #00f0ff)" : "none"
+                              }}
+                              transition={isWinningCell ? { 
+                                scale: { repeat: Infinity, duration: 1.5, ease: "easeInOut" },
+                                default: { duration: 0.3 }
+                              } : { duration: 0.3 }}
+                              className="text-primary neon-text-primary"
+                            >
+                              <XIcon className="w-16 h-16 sm:w-20 sm:h-20 md:w-28 md:h-28 lg:w-32 lg:h-32 stroke-[1.5px]" />
+                            </motion.div>
+                          )}
+                          {cell === 'O' && (
+                            <motion.div
+                              initial={{ scale: 0.5, opacity: 0 }}
+                              animate={{ 
+                                scale: isWinningCell ? [1, 1.2, 1] : 1, 
+                                opacity: 1,
+                                filter: isWinningCell ? "drop-shadow(0 0 25px #ff24e4)" : "drop-shadow(0 0 15px #ff24e466)"
+                              }}
+                              transition={isWinningCell ? { 
+                                scale: { repeat: Infinity, duration: 1.5, ease: "easeInOut" },
+                                default: { duration: 0.3 }
+                              } : { duration: 0.3 }}
+                              className="text-white"
+                            >
+                              <Circle className="w-14 h-14 sm:w-18 sm:h-18 md:w-24 md:h-24 lg:w-28 lg:h-28 stroke-[1.5px] text-[#ff24e4]" />
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    );
+                  })}
+               </div>
             </div>
           </div>
-        </section>
 
-        {/* Actions */}
-        <div className="mt-8 flex gap-4 w-full max-w-[360px]">
-          <button 
-            onClick={resetSeries}
-            className="flex-1 bg-primary/10 border border-primary/30 py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-primary/20 transition-all active:scale-[0.98]"
-          >
-            <RefreshCcw size={16} className="text-primary" />
-            <span className="text-[10px] font-bold text-primary uppercase tracking-widest">Reset Series</span>
-          </button>
-          <button 
-            onClick={handleBackToMenu}
-            className="flex-1 bg-white/5 border border-white/10 py-4 rounded-lg flex items-center justify-center gap-2 hover:bg-white/10 transition-all active:scale-[0.98]"
-          >
-            <Home size={16} className="text-on-surface" />
-            <span className="text-[10px] font-bold text-on-surface uppercase tracking-widest">Menu</span>
-          </button>
+          {/* Bottom Section: Scoreboard and Actions */}
+          <div className="flex flex-col w-full max-w-[380px] sm:max-w-[460px] md:max-w-[600px] lg:max-w-[660px]">
+            {/* Scoreboard */}
+            <section className="w-full">
+              <div className="bg-white/[0.03] border border-white/10 p-6 md:p-8 rounded-2xl flex justify-between items-center backdrop-blur-xl shadow-2xl relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-secondary-container/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                
+                <div className="flex flex-col items-center gap-2 flex-1 relative z-10">
+                  {editingP1 ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={tempP1Name}
+                        onChange={(e) => setTempP1Name(e.target.value)}
+                        onBlur={() => {
+                          onUpdateSettings({ player1Name: tempP1Name });
+                          setEditingP1(false);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            onUpdateSettings({ player1Name: tempP1Name });
+                            setEditingP1(false);
+                          }
+                        }}
+                        autoFocus
+                        className="bg-white/10 border-b border-primary text-[10px] md:text-xs font-black text-primary uppercase tracking-[0.2em] w-24 text-center focus:outline-none py-1"
+                      />
+                    </div>
+                  ) : (
+                    <div 
+                      className="flex items-center gap-2 cursor-pointer group/name"
+                      onClick={() => setEditingP1(true)}
+                    >
+                      <p className="text-[10px] md:text-xs font-black text-on-surface-variant/60 uppercase tracking-[0.2em] group-hover/name:text-primary transition-colors">{settings.player1Name} (X)</p>
+                      <Edit2 size={10} className="text-on-surface-variant/20 group-hover/name:text-primary transition-colors" />
+                    </div>
+                  )}
+                  <p className="text-4xl md:text-5xl lg:text-6xl font-black text-primary neon-text-primary tabular-nums">{scores.p1}</p>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 relative z-10 px-4">
+                  <p className="text-[10px] md:text-xs font-black text-on-surface-variant/40 uppercase tracking-[0.2em]">Draws</p>
+                  <p className="text-2xl md:text-3xl font-black text-white/40 tabular-nums">{scores.draws}</p>
+                </div>
+
+                <div className="flex flex-col items-center gap-2 flex-1 relative z-10">
+                  {settings.mode === 'pvp' ? (
+                    editingP2 ? (
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={tempP2Name}
+                          onChange={(e) => setTempP2Name(e.target.value)}
+                          onBlur={() => {
+                            onUpdateSettings({ player2Name: tempP2Name });
+                            setEditingP2(false);
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              onUpdateSettings({ player2Name: tempP2Name });
+                              setEditingP2(false);
+                            }
+                          }}
+                          autoFocus
+                          className="bg-white/10 border-b border-[#ff24e4] text-[10px] md:text-xs font-black text-[#ff24e4] uppercase tracking-[0.2em] w-24 text-center focus:outline-none py-1"
+                        />
+                      </div>
+                    ) : (
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer group/name"
+                        onClick={() => setEditingP2(true)}
+                      >
+                        <p className="text-[10px] md:text-xs font-black text-on-surface-variant/60 uppercase tracking-[0.2em] group-hover/name:text-[#ff24e4] transition-colors">{settings.player2Name} (O)</p>
+                        <Edit2 size={10} className="text-on-surface-variant/20 group-hover/name:text-[#ff24e4] transition-colors" />
+                      </div>
+                    )
+                  ) : (
+                    <p className="text-[10px] md:text-xs font-black text-on-surface-variant/60 uppercase tracking-[0.2em]">{settings.player2Name} (O)</p>
+                  )}
+                  <p className="text-4xl md:text-5xl lg:text-6xl font-black text-secondary-container drop-shadow-[0_0_15px_#ff24e4] tabular-nums">{scores.p2}</p>
+                </div>
+              </div>
+            </section>
+
+            {/* Actions */}
+            <div className="mt-6 flex flex-row gap-4 w-full">
+              <button 
+                onClick={resetSeries}
+                className="flex-1 bg-primary/10 border border-primary/20 py-4 md:py-6 rounded-xl flex items-center justify-center gap-3 hover:bg-primary/20 hover:border-primary/40 transition-all active:scale-[0.98] group"
+              >
+                <RefreshCcw size={18} className="text-primary group-hover:rotate-180 transition-transform duration-500" />
+                <span className="text-[11px] md:text-xs font-black text-primary uppercase tracking-[0.2em]">Reset Series</span>
+              </button>
+              <button 
+                onClick={handleBackToMenu}
+                className="flex-1 bg-white/[0.03] border border-white/10 py-4 md:py-6 rounded-xl flex items-center justify-center gap-3 hover:bg-white/[0.08] hover:border-white/20 transition-all active:scale-[0.98]"
+              >
+                <Home size={18} className="text-on-surface-variant" />
+                <span className="text-[11px] md:text-xs font-black text-on-surface-variant uppercase tracking-[0.2em]">Back to Menu</span>
+              </button>
+            </div>
+          </div>
+
         </div>
       </main>
 

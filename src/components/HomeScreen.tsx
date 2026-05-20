@@ -124,7 +124,7 @@ export default function HomeScreen({
           </section>
 
           {/* Action Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full max-w-2xl lg:max-w-4xl">
             {/* Battle AI Card */}
             <motion.div 
                initial={{ opacity: 0, x: -20 }}
