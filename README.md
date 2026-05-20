@@ -5,6 +5,19 @@
 [![Tailwind](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
+## 🖥️ Desktop Preview
+
+<div align="center">
+  <img src="src/snaps/desktop.png" alt="Xora.ai Desktop Preview" width="100%">
+</div>
+
+## 📱 Mobile & Gameplay
+
+<div align="center">
+  <img src="src/snaps/mobile.png" alt="Xora.ai Mobile Preview" width="45%">
+  <img src="src/snaps/gameplay.png" alt="Xora.ai Gameplay Preview" width="45%">
+</div>
+
 **Xora.ai** is a high-fidelity, neon-infused strategic experience that redefines the classic Tic-Tac-Toe game. Designed with a focus on advanced AI algorithms and immersive cyberpunk aesthetics, Xora.ai offers a glimpse into the future of casual gaming.
 
 ---
